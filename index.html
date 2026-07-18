@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Metode Numerik</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-window">
+        
+        <!-- Top Bar Aplikasi Desktop Mockup -->
+        <div class="app-topbar">
+            <div class="topbar-title">
+                <span class="icon">🔢</span> Kalkulator Metode Numerik
+            </div>
+            <div class="window-controls">
+                <span>─</span> <span>▢</span> <span>✕</span>
+            </div>
+        </div>
+
+        <div class="app-body">
+
+            <!-- ========================================================================= -->
+            <!-- MENU UTAMA / HOME BERANDA                                                -->
+            <!-- ========================================================================= -->
+            <div id="view-menu-utama" class="view-page active">
+                <div class="welcome-container">
+                    <div class="welcome-left">
+                        <div class="chart-illustration">
+                            <div class="chart-axis-y">y</div>
+                            <div class="chart-axis-x">x</div>
+                            <div class="chart-line"></div>
+                            <div class="dot" style="bottom: 15%; left: 15%;"></div>
+                            <div class="dot" style="bottom: 35%; left: 35%;"></div>
+                            <div class="dot" style="bottom: 55%; left: 55%;"></div>
+                            <div class="dot" style="bottom: 75%; left: 75%;"></div>
+                        </div>
+                    </div>
+                    <div class="welcome-right">
+                        <h2>KALKULATOR<br>METODE NUMERIK</h2>
+                        <p class="subtitle">Interpolasi Lanjar dan Polinom Lagrange</p>
+                        
+                        <div class="menu-buttons-list">
+                            <button type="button" class="btn-menu menu-blue" onclick="switchView('view-lanjar')">
+                                <span class="btn-icon">📈</span> Interpolasi Lanjar
+                            </button>
+                            <button type="button" class="btn-menu menu-green" onclick="switchView('view-polinom')">
+                                <span class="btn-icon">Σ</span> Polinom Lagrange
+                            </button>
+                            <button type="button" class="btn-menu menu-gray" onclick="switchView('view-tentang')">
+                                <span class="btn-icon">📄</span> Tentang Aplikasi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="app-footer-text">© 2026 – Metode Numerik</div>
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- HALAMAN 1: INTERPOLASI LANJAR                                            -->
+            <!-- ========================================================================= -->
+            <div id="view-lanjar" class="view-page">
+                <div class="page-header-nav" onclick="switchView('view-menu-utama')" style="cursor:pointer">
+                    <h3>&lt; Kembali ke Menu Utama</h3>
+                </div>
+                <div class="two-column-layout">
+                    <div class="card card-input">
+                        <h4>Input Data (Interpolasi Lanjar)</h4>
+                        <div class="form-row"><label>x₀</label><input type="number" id="x0" step="any" value="1960"></div>
+                        <div class="form-row"><label>y₀</label><input type="number" id="y0" step="any" value="179.3"></div>
+                        <div class="form-row"><label>x₁</label><input type="number" id="x1" step="any" value="1970"></div>
+                        <div class="form-row"><label>y₁</label><input type="number" id="y1" step="any" value="203.2"></div>
+                        <div class="form-row dashed-top">
+                            <label>Nilai x (yang dicari)</label>
+                            <input type="number" id="x-target-lanjar" step="any" value="1968">
+                        </div>
+                        <div class="action-buttons">
+                            <button type="button" id="btn-hitung-lanjar" class="btn-action btn-blue">Hitung</button>
+                            <button type="button" class="btn-action btn-secondary" onclick="resetFormLanjar()">Reset</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card card-output">
+                        <div class="output-box info-box">
+                            <h5>RUMUS</h5>
+                            <div class="formula-display">y = y₀ + [ (y₁ - y₀) / (x₁ - x₀) ] * (x - x₀)</div>
+                        </div>
+                        <div class="output-box success-box">
+                            <h5>Hasil Akhir</h5>
+                            <div id="output-y-lanjar" class="result-text">y(-) = -</div>
+                        </div>
+                        <div class="output-box step-box">
+                            <h5>Langkah Perhitungan</h5>
+                            <div id="langkah-lanjar" class="steps-pre">Klik Hitung untuk memproses...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- HALAMAN 2: POLINOM LAGRANGE                                              -->
+            <!-- ========================================================================= -->
+            <div id="view-polinom" class="view-page">
+                <div class="page-header-nav" onclick="switchView('view-menu-utama')" style="cursor:pointer">
+                    <h3>&lt; Kembali ke Menu Utama</h3>
+                </div>
+                <div class="two-column-layout">
+                    <div class="card card-input">
+                        <h4>Input Data Titik (x_i, y_i)</h4>
+                        <div class="form-row">
+                            <label>Jumlah Titik (n)</label>
+                            <div class="input-with-btn">
+                                <input type="number" id="jumlah-titik" min="3" max="10" value="4">
+                                <button type="button" id="btn-generate-titik" class="btn-small">Set</button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table id="tabel-titik-polinom">
+                                <thead>
+                                    <tr><th>i</th><th>x_i</th><th>y_i</th></tr>
+                                </thead>
+                                <tbody id="body-tabel-polinom">
+                                    <!-- Default Data Berdasarkan Contoh Soal Gambar Papan Tulis -->
+                                    <tr><td>0</td><td><input type="number" class="polinom-x" value="1960"></td><td><input type="number" class="polinom-y" value="179.3"></td></tr>
+                                    <tr><td>1</td><td><input type="number" class="polinom-x" value="1965"></td><td><input type="number" class="polinom-y" value="191.25"></td></tr>
+                                    <tr><td>2</td><td><input type="number" class="polinom-x" value="1968"></td><td><input type="number" class="polinom-y" value="198.42"></td></tr>
+                                    <tr><td>3</td><td><input type="number" class="polinom-x" value="1970"></td><td><input type="number" class="polinom-y" value="203.2"></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="form-row dashed-top">
+                            <label>Nilai x (yang dicari)</label>
+                            <input type="number" id="x-target-polinom" step="any" value="1966">
+                        </div>
+                        <div class="action-buttons">
+                            <button type="button" id="btn-hitung-polinom" class="btn-action btn-blue">Hitung</button>
+                            <button type="button" class="btn-action btn-secondary" onclick="aturBarisTabelPolinom()">Reset</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card card-output">
+                        <div class="output-box info-box">
+                            <h5>RUMUS</h5>
+                            <div id="formula-polinom-dynamic" class="formula-display">P_n(x) = Σ L_i(x) * y_i</div>
+                        </div>
+                        <div class="output-box success-box">
+                            <h5>Hasil Akhir</h5>
+                            <div id="output-y-polinom" class="result-text">P_n(-) = -</div>
+                        </div>
+                        <div class="output-box step-box">
+                            <h5>Langkah Perhitungan Lengkap</h5>
+                            <div id="langkah-polinom" class="steps-pre">Klik Hitung untuk memproses...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HALAMAN 3: TENTANG APLIKASI -->
+            <div id="view-tentang" class="view-page">
+                <div class="page-header-nav" onclick="switchView('view-menu-utama')" style="cursor:pointer">
+                    <h3>&lt; Kembali Ke Menu Utama</h3>
+                </div>
+                <div class="card">
+                    <h4>Tentang Aplikasi Kalkulator Metode Numerik</h4>
+                    <p style="margin-top:10px;">Aplikasi ini dirancang untuk menyelesaikan komputasi numerik pencocokan kurva menggunakan metode:</p>
+                    <ul style="margin: 15px 20px; line-height: 2;">
+                        <li><strong>Interpolasi Lanjar (Linier):</strong> Menghubungkan dua buah titik data dengan garis lurus.</li>
+                        <li><strong>Polinom Lagrange:</strong> Membentuk persamaan polinom tingkat tinggi dari beberapa koordinat titik data secara akurat.</li>
+                    </ul>
+                    <button type="button" class="btn-action btn-blue" style="width:200px; margin-top:15px;" onclick="switchView('view-menu-utama')">Kembali</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- LOGIKA JAVASCRIPT UTANPA ERROR RESOURCE LOKAL -->
+    <script>
+        function switchView(viewId) {
+            document.querySelectorAll('.view-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("btn-hitung-lanjar").addEventListener("click", hitungInterpolasiLanjar);
+            document.getElementById("btn-generate-titik").addEventListener("click", aturBarisTabelPolinom);
+            document.getElementById("btn-hitung-polinom").addEventListener("click", hitungInterpolasiPolinom);
+            
+            // Eksekusi default
+            hitungInterpolasiLanjar();
+            hitungInterpolasiPolinom();
+        });
+
+        function hitungInterpolasiLanjar() {
+            const x0 = parseFloat(document.getElementById("x0").value);
+            const y0 = parseFloat(document.getElementById("y0").value);
+            const x1 = parseFloat(document.getElementById("x1").value);
+            const y1 = parseFloat(document.getElementById("y1").value);
+            const xTarget = parseFloat(document.getElementById("x-target-lanjar").value);
+
+            if (isNaN(x0) || isNaN(y0) || isNaN(x1) || isNaN(y1) || isNaN(xTarget)) {
+                alert("Mohon lengkapi semua field koordinat!");
+                return;
+            }
+            if (x1 === x0) {
+                alert("Nilai x1 tidak boleh sama dengan x0 (Error: Pembagian Nol)!");
+                return;
+            }
+
+            const hasilY = y0 + ((y1 - y0) / (x1 - x0)) * (xTarget - x0);
+            document.getElementById("output-y-lanjar").innerText = `y(${xTarget}) = ${hasilY.toFixed(4).replace('.', ',')}`;
+
+            const teksLangkah = `Langkah Penyelesaian:\n1. Gunakan Rumus Garis Lurus:\n   y = y₀ + [ (y₁ - y₀) / (x₁ - x₀) ] * (x - x₀)\n\n2. Substitusikan Nilai:\n   y = ${y0} + [ (${y1} - ${y0}) / (${x1} - ${x0}) ] * (${xTarget} - ${x0})\n   y = ${y0} + [ ${(y1 - y0).toFixed(2)} / ${(x1 - x0).toFixed(2)} ] * ${(xTarget - x0)}\n   y = ${y0} + [ ${((y1 - y0) / (x1 - x0)).toFixed(4)} ] * ${(xTarget - x0)}\n   y = ${hasilY.toFixed(4).replace('.', ',')}`;
+            document.getElementById("langkah-lanjar").innerText = teksLangkah;
+        }
+
+        function aturBarisTabelPolinom() {
+            const jumlahTitik = parseInt(document.getElementById("jumlah-titik").value);
+            const tbody = document.getElementById("body-tabel-polinom");
+            if (jumlahTitik < 3 || jumlahTitik > 10 || isNaN(jumlahTitik)) {
+                alert("Jumlah titik data disarankan antara 3 s/d 10 baris.");
+                return;
+            }
+            tbody.innerHTML = "";
+            for (let i = 0; i < jumlahTitik; i++) {
+                const barisBaru = document.createElement("tr");
+                barisBaru.innerHTML = `
+                    <td>${i}</td>
+                    <td><input type="number" class="polinom-x" placeholder="x${i}"></td>
+                    <td><input type="number" class="polinom-y" placeholder="y${i}"></td>
+                `;
+                tbody.appendChild(barisBaru);
+            }
+        }
+
+        function hitungInterpolasiPolinom() {
+            const inputXElements = document.querySelectorAll(".polinom-x");
+            const inputYElements = document.querySelectorAll(".polinom-y");
+            const xTarget = parseFloat(document.getElementById("x-target-polinom").value);
+
+            if (isNaN(xTarget)) {
+                alert("Mohon isi nilai x target yang dicari!");
+                return;
+            }
+
+            let X = [], Y = [];
+            const n = inputXElements.length;
+
+            for (let i = 0; i < n; i++) {
+                const vx = parseFloat(inputXElements[i].value);
+                const vy = parseFloat(inputYElements[i].value);
+                if (isNaN(vx) || isNaN(vy)) {
+                    alert(`Mohon isi data lengkap pada kolom tabel titik ke-${i}`);
+                    return;
+                }
+                X.push(vx);
+                Y.push(vy);
+            }
+
+            // Update Label Rumus Dinamis Pn di atas kotak hasil
+            document.getElementById("formula-polinom-dynamic").innerText = `P_${n-1}(x) = ` + X.map((_, i) => `y_${i}L_${i}(x)`).join(" + ");
+
+            let hasilAkhirY = 0;
+            let langkahTeks = "";
+            let hasilLi = []; 
+
+            // =========================================================================
+            // RINCIAN HITUNGAN MANUAL L0 SAMPAI Ln-1 (PERSIS FORMAT GAMBAR)
+            // =========================================================================
+            for (let i = 0; i < n; i++) {
+                let pembilangNilai = 1;
+                let penyebutNilai = 1;
+                
+                let teksRumusAtas = "";
+                let teksRumusBawah = "";
+                let teksSubstitusiAtas = "";
+                let teksSubstitusiBawah = "";
+                let teksHasilKurangAtas = "";
+                let teksHasilKurangBawah = "";
+
+                for (let j = 0; j < n; j++) {
+                    if (i !== j) {
+                        pembilangNilai *= (xTarget - X[j]);
+                        penyebutNilai *= (X[i] - X[j]);
+
+                        teksRumusAtas += `(x - x${j})`;
+                        teksRumusBawah += `(x${i} - x${j})`;
+
+                        teksSubstitusiAtas += `(${xTarget} - ${X[j]})`;
+                        teksSubstitusiBawah += `(${X[i]} - ${X[j]})`;
+
+                        teksHasilKurangAtas += `(${(xTarget - X[j])})`;
+                        teksHasilKurangBawah += `(${(X[i] - X[j])})`;
+                    }
+                }
+
+                let nilaiLi = pembilangNilai / penyebutNilai;
+                hasilLi.push(nilaiLi); 
+                hasilAkhirY += nilaiLi * Y[i];
+
+                langkahTeks += `Hitung L${i}(x) :\n`;
+                langkahTeks += `L${i}(x) = (${teksRumusAtas}) / (${teksRumusBawah})\n`;
+                langkahTeks += `L${i}(${xTarget}) = (${teksSubstitusiAtas}) / (${teksSubstitusiBawah})\n`;
+                langkahTeks += `= (${teksHasilKurangAtas}) / (${teksHasilKurangBawah})\n`;
+                langkahTeks += `= ${pembilangNilai} / ${penyebutNilai}\n`;
+                langkahTeks += `= ${nilaiLi.toFixed(4).replace('.', ',')}\n\n`;
+            }
+
+            // =========================================================================
+            // PROSES AKHIR PENGGABUNGAN NILAI INTERPOLASI Pn(x)
+            // =========================================================================
+            langkahTeks += `Menghitung Nilai Interpolasi :\n`;
+            
+            // Baris 1: Simbol L
+            let barisP3Simbol = `P${n-1}(${xTarget}) = ` + Y.map((yVal, i) => `${yVal.toString().replace('.', ',')}L${i}(${xTarget})`).join(" + ");
+            langkahTeks += barisP3Simbol + "\n";
+
+            // Baris 2: Input nilai desimal L_i
+            let barisP3Angka = `= ` + Y.map((yVal, i) => `${yVal.toString().replace('.', ',')}(${hasilLi[i].toFixed(4).replace('.', ',')})`).join(" + ");
+            langkahTeks += barisP3Angka + "\n";
+
+            // Baris 3: Hasil perkalian tiap kelompok
+            let barisP3Perkalian = `= ` + Y.map((yVal, i) => `${(yVal * hasilLi[i]).toFixed(4).replace('.', ',')}`).join(" + ");
+            langkahTeks += barisP3Perkalian + "\n";
+
+            // Baris 4: Hasil Konklusi Akhir
+            langkahTeks += `= ${hasilAkhirY.toFixed(4).replace('.', ',')}\n\n`;
+            langkahTeks += `Jadi, perkiraan jumlah pada tahun ${xTarget} adalah ${hasilAkhirY.toFixed(4).replace('.', ',')}.`;
+
+            // Cetak data ke layar
+            document.getElementById("output-y-polinom").innerText = `P_${n-1}(${xTarget}) = ${hasilAkhirY.toFixed(4).replace('.', ',')}`;
+            document.getElementById("langkah-polinom").innerText = langkahTeks;
+        }
+
+        function resetFormLanjar() {
+            document.getElementById("x0").value = "";
+            document.getElementById("y0").value = "";
+            document.getElementById("x1").value = "";
+            document.getElementById("y1").value = "";
+            document.getElementById("x-target-lanjar").value = "";
+            document.getElementById("output-y-lanjar").innerText = "y(-) = -";
+            document.getElementById("langkah-lanjar").innerText = "Klik Hitung untuk memproses...";
+        }
+    </script>
+</body>
+</html>
